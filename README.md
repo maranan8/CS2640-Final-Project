@@ -8,5 +8,5 @@ This project is a cypher program written in MIPS assembly language. It allows th
 - [Timothy Jo](https://github.com/timjo1080)
 - [Lushan Zhang](https://github.com/LushanZhang)
 - [Jacob Ladd](https://github.com/jladd505)
-- [Bryan Pacheco]
+- [Bryan Pacheco](https://github.com/brypac2006)
   
