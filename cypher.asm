@@ -7,9 +7,16 @@
 
 .data
 
+#main menu
 title: .asciiz "~~~~~ Caeser Cypher ~~~~~\n"
 current_shift: .asciiz "\nCurrent shift: "
 menu: .asciiz  "\n*** MENU ***\n (1) Encode\n (2) Decode\n (3) Modify shift\n (4) Exit program\n\n Select option: "
+
+#invalid input
+invalid: .asciiz "\nInvalid Input: Please enter a number between 1-4\n"
+line: .asciiz "\n-----------------------------------------\n"
+
+
 text_prompt: .asciiz "Enter text: "
 shift_prompt: .asciiz "Enter shift value: "
 result_text: .asciiz "Result: "
@@ -47,6 +54,9 @@ loop:
 	beq $t0, 4, exit
 	
 	# jump back to loop if user option not 1-4
+	print(line)
+	print(invalid)
+	print(line)
 	j loop
 
 #encrypts text	
