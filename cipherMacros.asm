@@ -1,7 +1,7 @@
 # Final Group Project - MIPS Cipher Program
 # CS2640.02 - Computer Organization and Assembly Programming
 # Group Members - Austin Maranan, Timothy Jo, Lushan Zhang, Jacob Ladd, Bryan Pacheco
-# Description: Macros used in cypher.asm
+# Description: Macros used in cipher.asm
 
 #prints string
 .macro print(%string)
@@ -14,7 +14,7 @@
 .macro readStr(%buffer)
 	li $v0, 8
 	la $a0, %buffer
-	li $a1, 99
+	li $a1, 500
 	syscall
 	move $t1, $a0
 .end_macro
