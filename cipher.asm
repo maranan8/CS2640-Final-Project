@@ -13,12 +13,12 @@ current_shift: .asciiz "\nCurrent shift: "
 menu: .asciiz  "\n*** MENU ***\n (1) Encode\n (2) Decode\n (3) Modify shift\n (4) Exit program\n\nSelect option: "
 
 #invalid input
-invalid: .asciiz "\nInvalid Input: Please enter a number between 1-4\n"
+invalid: .asciiz "\nInvalid Input: Please enter a valid number\n"
 line: .asciiz "\n------------------------------------------------\n"
 
 
 text_prompt: .asciiz "Enter text: "
-shift_prompt: .asciiz "Enter shift value: "
+shift_prompt: .asciiz "Enter shift value (0-25): "
 result_text: .asciiz "Result: "
 
 new_line: .asciiz "\n"
@@ -96,9 +96,9 @@ shift_loop:
 	
 	# check for lowercase
 	li $t3, 'a'
-	li $t4, 'z'
-	blt $t2, $t3, next	# if char < 'a', skip shift
-	bgt $t2, $t4, next	# if char > 'z', skip shift
+	blt $t2, $t3, check_uppercase	# if char < 'a', check if uppercase
+	li $t3, 'z'
+	bgt $t2, $t3, next	# if char > 'z', then it will never be uppercase so we can go next
 		
 	# shift char by shift ($s0)
 	add $t2, $t2, $s0
@@ -122,17 +122,47 @@ check_below_a:
 	li $t6, 26
 	add $t2, $t2, $t6
 	
+	j store	#jumps to store value
+
+#checks if uppercase, same shifting steps as lowercase
+check_uppercase:
+	li $t3, 'A'
+	blt $t2, $t3, next	# if char < 'A', skip special characters
+	li $t3, 'Z'
+	bgt $t2, $t3, next	# if char > 'Z', skip punctuation characters
+	
+	#UPPERCASE shift char by shift ($s0)
+	add $t2, $t2, $s0
+		
+	# wrap if beyond 'Z'
+	li $t5, 'Z'
+	ble $t2, $t5, check_below_A
+		
+	# wrap around by subtracting 26
+	li $t6, 26
+	sub $t2, $t2, $t6
+	j check_below_A
+
+check_below_A:
+	# wrap if below 'A'
+	li $t7, 'A'
+	bge $t2, $t7, store
+	
+	# add 26 to wrap around 
+	li $t6, 26
+	add $t2, $t2, $t6			
+			
+	j store #jumps to store value		
 store:
 
 	sb $t2, 0($t1)		# store shifted char back to buffer
-
+	
 next:
 
 	addi $t1, $t1, 1
 	j shift_loop
 
 done:
-
 	jr $ra
 
 # determines the shift amount	
@@ -143,11 +173,19 @@ shift:
 	
 	# get user input for shift and store into $s0
 	readInt($s0) 
-
+	blt $s0, 0, invalid_val # shift value cannot be negative
+	bgt $s0, 25, invalid_val # shift value cannot be over 25
 	j loop
+
+#invalid message
+invalid_val:
+	print(line)
+	print(invalid)
+	print(line)
 	
-print_result: 
+	j shift
 	
+print_result: 	
 	print(result_text)
 	print(buffer)
 	print(new_line)
